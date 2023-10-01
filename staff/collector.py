@@ -65,9 +65,6 @@ class Collector:
         # перевожу тут, чтобы нормально расставил по возрастанию, основываясь только на байтах
         df_sys_files['File_size'] = df_sys_files['File_size'].apply(convert_size)
 
-        df_extensions_overall_top_10 = df_sys_files.head(n=10)
-
-        print(df_extensions_overall_top_10)
 
         print("Database has been created")
 
