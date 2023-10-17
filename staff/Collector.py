@@ -43,6 +43,7 @@ class Collector:
                 for fn in files:
 
                     path = os.path.join(root, fn)
+                    size_bytes = os.stat(path).st_size
                     size = convert_size(os.stat(path).st_size)
                     creation_time = time.ctime(os.path.getctime(path))
                     modification_time = time.ctime(os.path.getmtime(path))
@@ -50,11 +51,12 @@ class Collector:
 
                     data_in_cycle = [[fn,
                                       path,
+                                      size_bytes,
                                       size,
                                       creation_time,
                                       modification_time]]
 
-                    df_cycle = pd.DataFrame(data_in_cycle, columns=['File_Name', 'File_path',
+                    df_cycle = pd.DataFrame(data_in_cycle, columns=['File_name', 'File_path', 'File_size_bytes',
                                                                     'File_size', 'Creation_time',
                                                                     'Modification_time'])
 
@@ -89,7 +91,7 @@ class Collector:
 
         list_check_names = os.listdir(self.directory_save)
 
-        # Только сейчас понял, что можно не доставать время создания файла из названия, а просто брать из метаданных файла... Но пусть тут будет, потом переделаю. 
+        # Только сейчас понял, что можно не доставать время создания файла из названия, а просто брать из метаданных файла... Но пусть тут будет, потом переделаю.
         # Через коленку получилось, но тем не менее забавное решение, по-моему...
         if len(list_check_names) > 1:
 
@@ -124,3 +126,5 @@ class Collector:
         else:
             print("There is no stats about your hard disk")
             return None
+
+
