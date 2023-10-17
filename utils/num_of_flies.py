@@ -4,38 +4,37 @@ import pandas as pd
 import math
 from datetime import datetime
 from os.path import join, getsize
-import Collector
+from staff.Collector import Collector
 
-def num_of_files(your_path = '/Users/karnaukhovivan/Desktop/hard_disk_files_statisitcs.csv'):
+def num_of_files(user, directory_exp, directory_save):
 
-    if Collector.find_file() is None:
-        database_stat = Collector.getting_statisitcs(needed_path = "/Users/karnaukhovivan/Desktop")
-        Collector.write_to_csv(database_stat)
+    your_collector = Collector(user, directory_exp, directory_save)
+    is_db_relevant = your_collector.last_database_formation()
 
-        counted_files = database_stat.shape[0]
+    if is_db_relevant[0] == 1:
 
-        print(f"There are {counted_files} files on your hardware.")
+        path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
+        your_db = pd.read_csv(path_to_db)
+        number_of_files = your_db.shape[0]
 
-    else:
+        print(f"Your database is relatively new and your hard disk contains {number_of_files} files.")
 
-        if (time.time() - Collector.find_file()[3]) / 86400 > 2:
+        return number_of_files
 
-            print("You need to refresh the statistics of your hardware. Data might be invalid")
+    elif is_db_relevant[0] == 0:
 
-            database_stat = pd.read_csv(your_path)
-            counted_files = database_stat.shape[0]
+        path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
+        your_db = pd.read_csv(path_to_db)
+        number_of_files = your_db.shape[0]
 
-            print(f"There are {counted_files} files on your hardware.")
+        print(f"You need to refresh your hard disk statistics!!! However, your hard disk contains {number_of_files} files.")
+        return number_of_files
 
-        else:
+    elif is_db_relevant is None:
 
-            print("Your statistics has been created less than 2 days ago")
-
-            database_stat = pd.read_csv(your_path)
-            counted_files = database_stat.shape[0]
-
-            print(f"There are {counted_files} files on your hardware.")
-
+        print("There is no data about your hard disk")
+        return None
 
 
-    return counted_files
+
+print(num_of_files("Vanya", "/Users/karnaukhovivan/Desktop/Магистратура 2 курс", "/Users/karnaukhovivan/Desktop/dir_stat"))
