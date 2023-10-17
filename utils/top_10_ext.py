@@ -8,7 +8,8 @@ import Collector
 
 
 
-def top_10_files_weight(your_path = '/Users/karnaukhovivan/Desktop/hard_disk_files_statisitcs.csv'):
+def top_10_extensions(user, directory_exp, directory_save):
+
 
     def get_extension(path_to_a_file):
         last_part = path_to_a_file.split("/")[-1]
@@ -20,54 +21,43 @@ def top_10_files_weight(your_path = '/Users/karnaukhovivan/Desktop/hard_disk_fil
 
         return ex
 
-    if Collector.find_file() is None:
-        database_stat = Collector.getting_statisitcs(needed_path = "/Users/karnaukhovivan/Desktop")
-        Collector.write_to_csv(database_stat)
+    your_collector = Collector(user, directory_exp, directory_save)
+    is_db_relevant = your_collector.last_database_formation()
 
-        database_stat['File_extension'] = database_stat['File_path'].apply(get_extension)
-        df_extensions_overall = database_stat['File_extension'].value_counts()
+    if is_db_relevant[0] == 1:
+
+        path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
+        your_db = pd.read_csv(path_to_db)
+        your_db['File_extension'] = your_db['File_path'].apply(get_extension)
+        df_extensions_overall = your_db['File_extension'].value_counts()
 
         df_extensions_overall_top_10 = df_extensions_overall.head(n=10)
 
+        print(f"Your database is relatively new. Here is your top-10 extensions:")
         print(df_extensions_overall_top_10)
 
-        print(f"Here is top-10 extensions on your hard disk")
-        print(database_stat)
+        return df_extensions_overall_top_10
 
-    else:
+    elif is_db_relevant[0] == 0:
 
-        if (time.time() - Collector.find_file()[3]) / 86400 > 2:
+        path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
+        your_db = pd.read_csv(path_to_db)
+        your_db['File_extension'] = your_db['File_path'].apply(get_extension)
+        df_extensions_overall = your_db['File_extension'].value_counts()
 
-            print("You need to refresh the statistics of your hardware. Data might be invalid")
+        df_extensions_overall_top_10 = df_extensions_overall.head(n=10)
 
-            database_stat = pd.read_csv(your_path)
-            database_stat['File_extension'] = database_stat['File_path'].apply(get_extension)
-            df_extensions_overall = database_stat['File_extension'].value_counts()
+        print(f"You need to refresh your hard disk statistics!!! Here is your top-10 extensions:")
+        print(df_extensions_overall_top_10)
+        return df_extensions_overall_top_10
 
-            df_extensions_overall_top_10 = df_extensions_overall.head(n=10)
+    elif is_db_relevant is None:
 
-            print(f"Here is top-10 extensions on your hard disk")
-            print(df_extensions_overall_top_10)
-
-        else:
-
-            print("Your statistics has been created less than 2 days ago")
-
-            database_stat = pd.read_csv(your_path)
-            database_stat['File_extension'] = database_stat['File_path'].apply(get_extension)
-            df_extensions_overall = database_stat['File_extension'].value_counts()
-
-            df_extensions_overall_top_10 = df_extensions_overall.head(n=10)
-
-            print(f"Here is top-10 extensions on your hard disk")
-            print(df_extensions_overall_top_10)
+        print("There is no data about your hard disk")
+        return None
 
 
-
-
-
-    return database_stat
-
+your_top_10_extensions = top_10_extensions("Vanya", "/Users/karnaukhovivan/Desktop/Магистратура 2 курс", "/Users/karnaukhovivan/Desktop/dir_stat")
 
 
 
