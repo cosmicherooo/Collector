@@ -47,8 +47,6 @@ class Collector:
                     creation_time = time.ctime(os.path.getctime(path))
                     modification_time = time.ctime(os.path.getmtime(path))
 
-                    print(1)
-
                     data_in_cycle = [[fn,
                                       path,
                                       size,
