@@ -4,7 +4,7 @@ import pandas as pd
 import math
 from datetime import datetime
 from os.path import join, getsize
-import Collector
+from staff.Collector import Collector
 
 
 
