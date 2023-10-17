@@ -47,6 +47,7 @@ class Collector:
                     creation_time = time.ctime(os.path.getctime(path))
                     modification_time = time.ctime(os.path.getmtime(path))
 
+
                     data_in_cycle = [[fn,
                                       path,
                                       size,
@@ -86,13 +87,13 @@ class Collector:
 
     def last_database_formation(self):
 
-        list_check = os.listdir(self.directory_save)
+        list_check_names = os.listdir(self.directory_save)
 
-        print(len(list_check))
+        # Только сейчас понял, что можно не доставать время создания файла из названия, а просто брать из метаданных файла... Но пусть тут будет, потом переделаю. 
+        # Через коленку получилось, но тем не менее забавное решение, по-моему...
+        if len(list_check_names) > 1:
 
-        if len(list_check) != 1:
-
-            list_check = list(map(lambda x: x.replace(str(self.user) + "_", ''), list_check))
+            list_check = list(map(lambda x: x.replace(str(self.user) + "_", ''), list_check_names))
             list_check = list(map(lambda x: x.replace('.csv', ''), list_check))
             list_check = list(map(lambda x: x.replace('.', ':'), list_check))
             list_check = list(map(lambda x: x.replace(' ', 'T'), list_check))
@@ -101,21 +102,25 @@ class Collector:
             list_check = list(map(lambda x: time.strptime(x, '%Y-%m-%dT%H:%M:%S'), list_check))
             list_check = list(map(lambda x: time.mktime(x), list_check))
             list_check.sort()
-            latest_file = list_check[0]
+            latest_file = list_check[len(list_check) - 1]
 
             if time.time() - latest_file < 172_800:
                 print(
                     f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. It is relatively new.")
 
-                return 1
+                func_return_pos = [1, list_check_names[len(list_check_names) - 1]]
+
+                return func_return_pos
 
             else:
                 print(f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
 
-                return 0
+                func_return_neg = [1, list_check_names[len(list_check_names) - 1]]
+
+                return func_return_neg
 
 
 
         else:
             print("There is no stats about your hard disk")
-            return 0
+            return None
