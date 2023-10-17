@@ -115,7 +115,7 @@ class Collector:
             else:
                 print(f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
 
-                func_return_neg = [1, list_check_names[len(list_check_names) - 1]]
+                func_return_neg = [0, list_check_names[len(list_check_names) - 1]]
 
                 return func_return_neg
 
