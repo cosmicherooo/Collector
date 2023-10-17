@@ -108,13 +108,16 @@ class Collector:
             if time.time() - latest_file < 172_800:
                 print(
                     f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. It is relatively new.")
-            else:
-                print(
-                    f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
 
-            return (time.time() - latest_file) / 86_400
+                return 1
+
+            else:
+                print(f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
+
+                return 0
+
+
 
         else:
             print("There is no stats about your hard disk")
-
-
+            return 0
