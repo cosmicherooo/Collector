@@ -1,3 +1,10 @@
+# pip install python-docx
+import docx
+# pip install python-pptx
+import pptx
+from pptx import Presentation
+from openpyxl import load_workbook
+
 class MsOfficeMinion():
 
     ex = ['docx', 'pptx', 'xlsx']
