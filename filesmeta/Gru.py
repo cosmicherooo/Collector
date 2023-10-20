@@ -1,9 +1,8 @@
-class Gru():
+class Gru:
 
     def __init__(self):
 
         self._extensions = {}
-
 
 
     def add_minion(self, minion):
@@ -21,7 +20,8 @@ class Gru():
             else:
                 ex = None
 
-        res = {}
+            return ex
+
         dict_common_metadata = CommonMetaMinion().get_meta_inf(path)
         ex = get_extension(path)
         dict_spec_metadata = self._extensions[ex].get_meta_inf(path)
