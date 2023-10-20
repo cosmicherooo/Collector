@@ -1,4 +1,5 @@
 from PyPDF2 import PdfReader
+
 class PdfMinion:
 
     ex = ['pdf']
