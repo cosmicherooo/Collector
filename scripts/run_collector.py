@@ -6,12 +6,14 @@ from datetime import datetime
 from os.path import join, getsize
 
 from staff.collector import Collector
+from filesmeta import Gru, CommonMetaMinion, ImageMinion, MsOfficeMinion, PdfMinion
 
-def main(): 
 
-  harddisk_stat = Collector.getting_statisitcs()
-  write_to_csv(harddisk_stat)
-
-if __name__ == "__main__":
-    main()
+collect_1 = Collector("Vanya", "/Users/karnaukhovivan/Desktop/3 курс", "/Users/karnaukhovivan/Desktop/dir_stat")
+print(collect_1)
+data_frame_test = collect_1.get_statistics()
+print(data_frame_test)
+collect_1.write_csv_file()
+answer = collect_1.last_database_formation()
+print(answer)
   
