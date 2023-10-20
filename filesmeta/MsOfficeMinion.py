@@ -5,19 +5,24 @@ import pptx
 from pptx import Presentation
 from openpyxl import load_workbook
 
-class MsOfficeMinion():
+
+class MsOfficeMinion:
 
     ex = ['docx', 'pptx', 'xlsx']
 
-    def get_extension(path_to_a_file):
-        last_part = path_to_a_file.split("/")[-1]
-        if "." in last_part:
-            ex = path_to_a_file.split(".")[-1]
-        else:
-            ex = "У файла нет расширения"
-        return ex
+
 
     def get_meta_inf(self, path):
+
+        def get_extension(path_to_a_file):
+            last_part = path_to_a_file.split("/")[-1]
+            if "." in last_part:
+                ex = path_to_a_file.split(".")[-1]
+            else:
+                ex = "У файла нет расширения"
+            return ex
+
+
         if get_extension(path) == 'docx':
             try:
                 fname = path
@@ -28,7 +33,7 @@ class MsOfficeMinion():
                 data_docx = {}
                 for d in dir(prop):
                     if not d.startswith('_'):
-                        data_docx[d] = getattr(prop, d)
+                        data_docx[d] = [getattr(prop, d)]
 
 
 
@@ -48,9 +53,9 @@ class MsOfficeMinion():
                 data_pptx = {}
                 for d in dir(prop):
                     if not d.startswith('_'):
-                        data_pptx[d] = getattr(prop, d)
+                        data_pptx[d] = [getattr(prop, d)]
 
-                num_of_slides = {"Slides": len(pres.slides)}
+                num_of_slides = {"Slides": [len(pres.slides)]}
 
                 data_pptx.update(num_of_slides)
 
@@ -72,9 +77,9 @@ class MsOfficeMinion():
                 data_xlsx = {}
                 for d in dir(prop):
                     if not d.startswith('_'):
-                        data_xlsx[d] = getattr(prop, d)
+                        data_xlsx[d] = [getattr(prop, d)]
 
-                num_of_sheets = {"Sheets": len(table.sheetnames)}
+                num_of_sheets = {"Sheets": [len(table.sheetnames)]}
 
                 data_xlsx.update(num_of_sheets)
 
