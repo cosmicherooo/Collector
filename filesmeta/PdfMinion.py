@@ -1,4 +1,5 @@
-class PdfMinion():
+from PyPDF2 import PdfReader
+class PdfMinion:
 
     ex = ['pdf']
 
@@ -7,9 +8,9 @@ class PdfMinion():
             pdf_reader = PdfReader(path)
 
             pdf_data = {
-                "Title": pdf_reader.metadata['/Title'],
-                "Producer": pdf_reader.metadata['/Producer'],
-                "Pages": len(pdf_reader.pages),
+                "Title": [pdf_reader.metadata['/Title']],
+                "Author": [pdf_reader.metadata['/Producer']],
+                "Pages": [len(pdf_reader.pages)],
                         }
 
             return pdf_data
