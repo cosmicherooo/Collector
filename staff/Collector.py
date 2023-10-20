@@ -8,14 +8,15 @@ from datetime import datetime
 
 
 class Collector:
+
     time_of_creation_sec = time.time()
     time_of_creation_stand = ((str(datetime.now()))[:(str(datetime.now())).rfind('.')]).replace(':', '.')
 
-    def __init__(self, user, directory_exp, directory_save):
+    def __init__(self, user_init, directory_exp_init, directory_save_init):
 
-        self.user = user
-        self.directory_exp = directory_exp
-        self.directory_save = directory_save
+        self.user = user_init
+        self.directory_exp = directory_exp_init
+        self.directory_save = directory_save_init
 
     def form_csv_name(self):
 
@@ -24,18 +25,19 @@ class Collector:
 
     def get_statistics(self):
 
-        def convert_size(size_bytes):
-            if size_bytes == 0:
-                return "0B"
+        g = Gru()
+        minion_ms_office = MsOfficeMinion()
+        minion_image = ImageMinion()
+        minion_pdf = PdfMinion()
+        minion_common = CommonMetaMinion()
+        minion_list_ext = [minion_ms_office, minion_image,
+                           minion_pdf, minion_common]
 
-            size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-            i = int(math.floor(math.log(size_bytes, 1024)))
-            p = math.pow(1024, i)
-            s = round(size_bytes / p, 2)
-
-            return "%s %s" % (s, size_name[i])
+        for minion in minion_list_ext:
+            g.add_minion(minion)
 
         check = 0
+
         memory_data = None
 
         for root, dirs, files in os.walk(self.directory_exp):
@@ -43,30 +45,24 @@ class Collector:
                 for fn in files:
 
                     path = os.path.join(root, fn)
-                    size_bytes = os.stat(path).st_size
-                    size = convert_size(os.stat(path).st_size)
-                    creation_time = time.ctime(os.path.getctime(path))
-                    modification_time = time.ctime(os.path.getmtime(path))
+                    print(path)
 
+                    metadata_dict = g.get_meta_inf(path)
+                    print(metadata_dict)
 
-                    data_in_cycle = [[fn,
-                                      path,
-                                      size_bytes,
-                                      size,
-                                      creation_time,
-                                      modification_time]]
+                    df_cycle_metadata = pd.DataFrame.from_dict(metadata_dict)
 
-                    df_cycle = pd.DataFrame(data_in_cycle, columns=['File_name', 'File_path', 'File_size_bytes',
-                                                                    'File_size', 'Creation_time',
-                                                                    'Modification_time'])
+                    print(df_cycle_metadata)
 
                     if check == 0:
-                        memory_data = df_cycle
-
+                        memory_data = df_cycle_metadata
 
                     else:
-                        memory_data = pd.concat([memory_data, df_cycle],
-                                                ignore_index=True)
+
+                        print(memory_data)
+
+                        memory_data = pd.concat([memory_data, df_cycle_metadata],
+                                                axis=0)
 
                     check += 1
 
@@ -82,8 +78,10 @@ class Collector:
 
         os.makedirs(self.directory_save,
                     exist_ok=True)
-        collect_1.get_statistics().to_csv(self.directory_save + "/" + self.form_csv_name(),
-                                          index=True)
+
+
+        self.get_statistics().to_csv(self.directory_save + "/" + self.form_csv_name(),
+                                     index=True)
 
         print(f"Database named {self.form_csv_name()} is in the path: {self.directory_save}")
 
@@ -126,5 +124,3 @@ class Collector:
         else:
             print("There is no stats about your hard disk")
             return None
-
-
