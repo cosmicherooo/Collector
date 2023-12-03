@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 from os.path import join, getsize
 from datetime import datetime
-
+import sqlite3
 
 class Collector:
 
@@ -18,10 +18,12 @@ class Collector:
         self.directory_exp = directory_exp_init
         self.directory_save = directory_save_init
 
-    def form_csv_name(self):
+    def form_sqlite_path(self):
 
-        csv_name = self.user + "_" + self.time_of_creation_stand + ".csv"
-        return csv_name
+        sqlite_name = self.user + "_" + self.time_of_creation_stand + ".db"
+        sqlite_path = self.directory_save + "/" + sqlite_name
+
+        return sqlite_path
 
     def get_statistics(self):
 
@@ -32,13 +34,64 @@ class Collector:
         minion_common = CommonMetaMinion()
         minion_list_ext = [minion_ms_office, minion_image,
                            minion_pdf, minion_common]
-
         for minion in minion_list_ext:
             g.add_minion(minion)
 
-        check = 0
+        sqlite_path = self.form_sqlite_path()
 
-        memory_data = None
+        def db_insert(f):
+
+            def wrapper(*args, **kwargs):
+                connection = sqlite3.connect(sqlite_path)
+                cursor = connection.cursor()
+
+                cursor.execute('''
+                CREATE TABLE IF NOT EXISTS files_info (
+                File_name TEXT,
+                File_path TEXT,
+                File_size_bytes INTEGER,
+                File_size INTEGER, 
+                Creation_time TEXT,
+                Modification_time TEXT,
+                Title TEXT,
+                Author TEXT, 
+                Pages TEXT,
+                category TEXT,
+                comments TEXT,
+                content_status TEXT,
+                indetifier TEXT,
+                keywords TEXT, 
+                language TEXT, 
+                last_modified_by TEXT,
+                last_printed TEXT,
+                modified TEXT,
+                revision REAL,
+                subject TEXT,
+                version REAL,
+                Image_height REAL,
+                Image_width REAL,
+                Image_format TEXT,
+                Image_mode TEXT,
+                Image_is_animated TEXT,
+                Frames_in_image REAL
+                )
+                ''')
+
+                dict_meta = f(*args, **kwargs)
+                columns = ', '.join(dict_meta.keys())
+                placeholders = ':' + ', :'.join(dict_meta.keys())
+                cursor.execute('INSERT INTO files_info (%s) VALUES (%s)' % (columns, placeholders), dict_meta)
+                connection.commit()
+                connection.close()
+
+            return wrapper
+
+        @db_insert
+        def meta_inf(path_1):
+
+            metadata_dict_1 = g.get_meta_inf(path_1)
+
+            return metadata_dict_1
 
         for root, dirs, files in os.walk(self.directory_exp):
             try:
@@ -47,43 +100,13 @@ class Collector:
                     path = os.path.join(root, fn)
                     print(path)
 
-                    metadata_dict = g.get_meta_inf(path)
-                    print(metadata_dict)
-
-                    df_cycle_metadata = pd.DataFrame.from_dict(metadata_dict)
-
-                    print(df_cycle_metadata)
-
-                    if check == 0:
-                        memory_data = df_cycle_metadata
-
-                    else:
-
-                        print(memory_data)
-
-                        memory_data = pd.concat([memory_data, df_cycle_metadata],
-                                                axis=0)
-
-                    check += 1
-
+                    meta_inf(path)
 
             except:
+
                 print(f"{path} is broken and cannot be considered")
 
         print("Database has been created")
-
-        return memory_data
-
-    def write_csv_file(self):
-
-        os.makedirs(self.directory_save,
-                    exist_ok=True)
-
-
-        self.get_statistics().to_csv(self.directory_save + "/" + self.form_csv_name(),
-                                     index=True)
-
-        print(f"Database named {self.form_csv_name()} is in the path: {self.directory_save}")
 
     def last_database_formation(self):
 
