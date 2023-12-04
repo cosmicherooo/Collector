@@ -117,10 +117,11 @@ class Collector:
         if len(list_check_names) > 1:
 
             list_check = list(map(lambda x: x.replace(str(self.user) + "_", ''), list_check_names))
-            list_check = list(map(lambda x: x.replace('.csv', ''), list_check))
+            list_check = list(map(lambda x: x.replace('.db', ''), list_check))
             list_check = list(map(lambda x: x.replace('.', ':'), list_check))
             list_check = list(map(lambda x: x.replace(' ', 'T'), list_check))
             list_check.remove(':DS_Store')
+            print(list_check)
 
             list_check = list(map(lambda x: time.strptime(x, '%Y-%m-%dT%H:%M:%S'), list_check))
             list_check = list(map(lambda x: time.mktime(x), list_check))
@@ -136,11 +137,14 @@ class Collector:
                 return func_return_pos
 
             else:
-                print(f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
+                print(
+                    f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. You need to refresh your database.")
 
                 func_return_neg = [0, list_check_names[len(list_check_names) - 1]]
 
                 return func_return_neg
+
+        print("Database has been created")
 
 
 
