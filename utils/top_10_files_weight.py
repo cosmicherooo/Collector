@@ -16,37 +16,44 @@ def top_10_files_weight(user, directory_exp, directory_save):
     if is_db_relevant[0] == 1:
 
         path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
-        your_db = pd.read_csv(path_to_db)
 
-        your_db_sorted_by_weight = your_db.sort_values('File_size_bytes',
-                                                       ascending=False)
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+        cursor.execute("SELECT File_name, File_size FROM files_info ORDER BY File_size_bytes DESC LIMIT 10")
 
-        top_10_largest_files = your_db_sorted_by_weight.head(n=10)
+        dict_files = {}
 
-        top_10_largest_files_dict = dict(list(zip(top_10_largest_files["File_name"], top_10_largest_files['File_size'])))
+        for row in cursor.fetchmany(10):
+            dict_files[str(row[0])] = str(row[1])
+
+        connection.close()
+
 
         print(f"Your database is relatively new. Here is your top-10 largest files on your hard disk:")
-        print(top_10_largest_files_dict)
+        print(dict_files)
 
-        return top_10_largest_files_dict
+        return dict_files
 
     elif is_db_relevant[0] == 0:
 
         path_to_db = your_collector.directory_save + "/" + str(is_db_relevant[1])
-        your_db = pd.read_csv(path_to_db)
 
-        your_db_sorted_by_weight = your_db.sort_values('File_size_bytes',
-                                                       ascending=False)
+        connection = sqlite3.connect(path_to_db)
+        cursor = connection.cursor()
+        cursor.execute("SELECT File_name, File_size FROM files_info ORDER BY File_size_bytes DESC LIMIT 10")
 
-        top_10_largest_files = your_db_sorted_by_weight.head(n=10)
+        dict_files = {}
 
-        top_10_largest_files_dict = dict(list(zip(top_10_largest_files["File_name"], top_10_largest_files['File_size'])))
+        for row in cursor.fetchmany(10):
+            dict_files[str(row[0])] = str(row[1])
+
+        connection.close()
 
 
 
         print(f"You need to refresh your hard disk statistics!!! Here is your top-10 largest files on your hard disk:")
-        print(top_10_largest_files_dict)
-        return top_10_largest_files_dict
+        print(dict_files)
+        return dict_files
 
     elif is_db_relevant is None:
 
