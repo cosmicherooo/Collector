@@ -93,24 +93,38 @@ class Collector:
 
             return metadata_dict_1
 
-        for root, dirs, files in os.walk(self.directory_exp):
+        def file_iter():
+            for root, dirs, files in os.walk(self.directory_exp):
+                try:
+                    for fn in files:
+                        
+                        if fn.startswith("."):
+                            pass
+                            
+                        yield os.path.join(root, fn)
+
+                except GeneratorExit:
+                    print("Need to do some clean up.")
+                    return
+
+
+
+                #except:
+                    #print(f"{os.path.join(root, fn)} is broken and cannot be considered")
+
+        for file in file_iter():
             try:
-                for fn in files:
-
-                    path = os.path.join(root, fn)
-                    print(path)
-
-                    meta_inf(path)
+                meta_inf(file)
 
             except:
+                print(f"{file} is broken and cannot be considered")
 
-                print(f"{path} is broken and cannot be considered")
 
-        print("Database has been created")
 
     def last_database_formation(self):
 
         list_check_names = os.listdir(self.directory_save)
+        list_check_names.sort()
 
         # Только сейчас понял, что можно не доставать время создания файла из названия, а просто брать из метаданных файла... Но пусть тут будет, потом переделаю.
         # Через коленку получилось, но тем не менее забавное решение, по-моему...
@@ -132,7 +146,10 @@ class Collector:
                 print(
                     f"Your hard disk stats were compiled {(time.time() - latest_file) / 86_400} days ago. It is relatively new.")
 
+
                 func_return_pos = [1, list_check_names[len(list_check_names) - 1]]
+
+                print(func_return_pos)
 
                 return func_return_pos
 
@@ -145,9 +162,3 @@ class Collector:
                 return func_return_neg
 
         print("Database has been created")
-
-
-
-        else:
-            print("There is no stats about your hard disk")
-            return None
