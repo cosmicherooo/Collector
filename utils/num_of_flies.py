@@ -39,7 +39,7 @@ def num_of_files(user, directory_exp, directory_save):
 
         print(f"Your database is relatively new and your hard disk contains {len(results)} files.")
 
-        print(f"You need to refresh your hard disk statistics!!! However, your hard disk contains {number_of_files} files.")
+        print(f"You need to refresh your hard disk statistics!!! However, your hard disk contains {len(results)} files.")
         return len(results)
 
     elif is_db_relevant is None:
