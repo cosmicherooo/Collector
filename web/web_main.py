@@ -5,7 +5,7 @@ from datetime import datetime
 from os.path import join, getsize
 from staff.Collector import Collector
 from utils.num_of_flies import num_of_flies
-from utils.top_10_ext import top_10_ext
+from utils.top_10_ext import top_10_extensions
 from utils.top_10_files_weight import top_10_files_weight
 import sys
 import os
