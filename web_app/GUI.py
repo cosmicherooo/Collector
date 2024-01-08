@@ -66,7 +66,7 @@ def top_10_ext_tk():
 
    to_print = "\n\n".join(top_10_ext_print)
    res_wind = tk.Toplevel(root)
-   res_wind.title("Top 10 Extensions")
+   res_wind.title("Топ-10 расширений")
 
    text_widg = Text(res_wind, wrap=tk.WORD)
    text_widg.insert(tk.END, to_print)
@@ -78,7 +78,7 @@ def top_10_files_tk():
 
     to_print = "\n\n".join(top_10_files_print)
     res_wind = tk.Toplevel(root)
-    res_wind.title("Top-10 Extensions")
+    res_wind.title("Топ-10 файлов по весу")
 
     text_widg = Text(res_wind, wrap=tk.WORD)
     text_widg.insert(tk.END, to_print)
